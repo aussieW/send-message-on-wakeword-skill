@@ -53,7 +53,7 @@ class wakewordskill(MycroftSkill):
             mqttc.tls_set(self.mqttca)
         LOGGER.info("AJW - connect to: " + self.mqtthost + ":" + str(self.mqttport) + " as MycroftAI_" + self.default_location )
         self.mqttc.connect(self.mqtthost,self.mqttport,10)
-	# if s topic is provided then set up a listene
+	# if a topic is provided then set up a listener
         if topic:
             self.mqttc.on_message = self.on_message
             self.mqttc.loop_start()
@@ -70,7 +70,7 @@ class wakewordskill(MycroftSkill):
         self.mqtt_connect()
         self.mqtt_publish('kitchen/display/wakeword', 'begin')
         self.mqtt_disconnect()
-	return False
+        return False
 
     def handle_record_end(self, event):
         self.mqtt_connect()
