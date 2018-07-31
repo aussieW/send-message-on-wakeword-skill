@@ -1,11 +1,11 @@
-from mycroft.util.log import LOG
-
-from mycroft.messagebus.client.ws import WebsocketClient
-from mycroft.util import create_daemon, wait_for_exit_signal, reset_sigint_handler
-from adapt.intent import IntentBuilder
+#from mycroft.messagebus.client.ws import WebsocketClient
+#from mycroft.util import create_daemon, wait_for_exit_signal, reset_sigint_handler
+#from adapt.intent import IntentBuilder
 from mycroft.skills.core import MycroftSkill, intent_handler
 from mycroft.util.log import getLogger
 from mycroft.api import DeviceApi
+
+from mycroft.messagebus.message import Message
 
 #from urllib2 import urlopen  # <<< not sure if this is required
 import paho.mqtt.client as mqtt
@@ -17,7 +17,8 @@ ws = None
 class wakewordskill(MycroftSkill):
 
     def __init__(self):
-        super(wakewordskill, self).__init__(name="wakewordskill")
+        MycroftSkill.__init__(self)
+#        super(wakewordskill, self).__init__(name="wakewordskill")
 
         self.default_location = self.room_name
        
@@ -31,14 +32,18 @@ class wakewordskill(MycroftSkill):
         self.mqttpass = self.config["mqtt-pass"]
 
 
-        global ws
-        ws = WebsocketClient()
-        ws.on('recognizer_loop:record_begin', self.handle_record_begin)
-        ws.on('recognizer_loop:record_end', self.handle_record_end)
+        self.add_event('recognizer_loop:record_begin', self.handle_listener_started)
+        self.add_event('recognizer_loop:record_end', self.handle_listener_stopped)
+
+
+#        global ws
+#        ws = WebsocketClient()
+#        ws.on('recognizer_loop:record_begin', self.handle_record_begin)
+#        ws.on('recognizer_loop:record_end', self.handle_record_end)
 #        ws.on('recognizer_loop:utterance', self.handle_utterance)
 
-        create_daemon(ws.run_forever)
-        wait_for_exit_signal()
+#        create_daemon(ws.run_forever)
+#        wait_for_exit_signal()
 
         LOGGER.info('WakeWordSkill loaded ........')
     
@@ -46,14 +51,14 @@ class wakewordskill(MycroftSkill):
         pass
 		
     def mqtt_connect(self, topic=None):
-        self.mqttc = mqtt.Client("MycroftAI_" + self.default_location + "_" + type(self).__name__)  # construct a unique identifier using the loaction and skill name.
+        self.mqttc = mqtt.Client("MycroftAI_" + self.default_location + "_" + type(self).__name__)  # make unique by appending the location and the skill name.
         if (self.mqttauth == "yes"):
             mqttc.username_pw_set(self.mqttuser,self.mqttpass)
         if (self.mqttssl == "yes"):
             mqttc.tls_set(self.mqttca)
         LOGGER.info("AJW - connect to: " + self.mqtthost + ":" + str(self.mqttport) + " as MycroftAI_" + self.default_location + "_" + type(self).__name__)
         self.mqttc.connect(self.mqtthost,self.mqttport,10)
-	# if a topic is provided then set up a listener
+	# if s topic is provided then set up a listene
         if topic:
             self.mqttc.on_message = self.on_message
             self.mqttc.loop_start()
@@ -62,21 +67,21 @@ class wakewordskill(MycroftSkill):
     def mqtt_disconnect(self):
         self.mqttc.disconnect()
 
-    def handle_utterance(self, event):
-        return False
+#    def handle_utterance(self, event):
+#        pass
 
-    def handle_record_begin(self, event):
+    def handle_listener_started(self, event):
         LOGGER.info('Wakeword detected - recording begin')
         self.mqtt_connect()
         self.mqtt_publish('kitchen/display/wakeword', 'begin')
         self.mqtt_disconnect()
-        return False
+        return
 
-    def handle_record_end(self, event):
+    def handle_listener_stopped(self, event):
         self.mqtt_connect()
         self.mqtt_publish('kitchen/display/wakeword', 'end')
         self.mqtt_disconnect()
-        return False
+        return
 
     def mqtt_publish(self, topic, msg):
         LOGGER.info("AJW: Published " + topic + ", " + msg)
