@@ -2,14 +2,11 @@ from mycroft.skills.core import MycroftSkill, intent_handler
 from mycroft.util.log import getLogger
 from mycroft.api import DeviceApi
 
-from mycroft.messagebus.message import Message
+from mycroft.messagebus.message import Message  #<< not sure if this is required. probably not!!
 
-#from urllib2 import urlopen  # <<< not sure if this is required
 import paho.mqtt.client as mqtt
 
 LOGGER = getLogger(__name__)
-
-ws = None
 
 class wakewordskill(MycroftSkill):
 
