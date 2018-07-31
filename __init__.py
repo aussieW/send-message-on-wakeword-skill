@@ -1,6 +1,3 @@
-#from mycroft.messagebus.client.ws import WebsocketClient
-#from mycroft.util import create_daemon, wait_for_exit_signal, reset_sigint_handler
-#from adapt.intent import IntentBuilder
 from mycroft.skills.core import MycroftSkill, intent_handler
 from mycroft.util.log import getLogger
 from mycroft.api import DeviceApi
@@ -31,24 +28,11 @@ class wakewordskill(MycroftSkill):
         self.mqttuser = self.config["mqtt-user"]
         self.mqttpass = self.config["mqtt-pass"]
 
-
-        self.add_event('recognizer_loop:record_begin', self.handle_listener_started)
-        self.add_event('recognizer_loop:record_end', self.handle_listener_stopped)
-
-
-#        global ws
-#        ws = WebsocketClient()
-#        ws.on('recognizer_loop:record_begin', self.handle_record_begin)
-#        ws.on('recognizer_loop:record_end', self.handle_record_end)
-#        ws.on('recognizer_loop:utterance', self.handle_utterance)
-
-#        create_daemon(ws.run_forever)
-#        wait_for_exit_signal()
-
         LOGGER.info('WakeWordSkill loaded ........')
     
-    def initialize(self):
-        pass
+    def initialize(self)
+        self.add_event('recognizer_loop:record_begin', self.handle_listener_started)
+        self.add_event('recognizer_loop:record_end', self.handle_listener_stopped)
 		
     def mqtt_connect(self, topic=None):
         self.mqttc = mqtt.Client("MycroftAI_" + self.default_location + "_" + type(self).__name__)  # make unique by appending the location and the skill name.
