@@ -12,8 +12,7 @@ class wakewordskill(MycroftSkill):
 
     def __init__(self):
         MycroftSkill.__init__(self)
-#        super(wakewordskill, self).__init__(name="wakewordskill")
-
+        
         self.default_location = self.room_name
        
         self.protocol = self.config["protocol"]
@@ -30,6 +29,7 @@ class wakewordskill(MycroftSkill):
     def initialize(self)
         self.add_event('recognizer_loop:record_begin', self.handle_listener_started)
         self.add_event('recognizer_loop:record_end', self.handle_listener_stopped)
+        self.add_event('recognizer_loop:utterance', self.handle_utterance)
 		
     def mqtt_connect(self, topic=None):
         self.mqttc = mqtt.Client("MycroftAI_" + self.default_location + "_" + type(self).__name__)  # make unique by appending the location and the skill name.
@@ -48,17 +48,21 @@ class wakewordskill(MycroftSkill):
     def mqtt_disconnect(self):
         self.mqttc.disconnect()
 
-#    def handle_utterance(self, event):
-#        pass
+    def handle_utterance(self, message):
+        LOGGER.info('Utterance: ' + str(message.data.get('Utterances')))
+        self.mqtt_connect()
+        self.mqtt_publish('kitchen/display/user_utterance', str(message.data.get('Utterances')[0]))
+        self.mqtt_disconnect()
+        return
 
-    def handle_listener_started(self, event):
+    def handle_listener_started(self, message):
         LOGGER.info('Wakeword detected - recording begin')
         self.mqtt_connect()
         self.mqtt_publish('kitchen/display/wakeword', 'begin')
         self.mqtt_disconnect()
         return
 
-    def handle_listener_stopped(self, event):
+    def handle_listener_stopped(self, message):
         self.mqtt_connect()
         self.mqtt_publish('kitchen/display/wakeword', 'end')
         self.mqtt_disconnect()
