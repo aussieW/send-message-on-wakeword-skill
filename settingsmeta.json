@@ -31,7 +31,7 @@
                      "value": "no"
                   },
                   {
-                     "name": "ca-certificate",
+                     "name": "ca_certificate",
                      "type": "text",
                      "label": "CA Certificate",
                      "value": ""
@@ -43,7 +43,7 @@
                      "value": "yes"
                   },
                   {
-                     "name": "user",
+                     "name": "username",
                      "type": "text",
                      "label": "Username",
                      "value": ""
