@@ -17,14 +17,14 @@ class wakewordskill(MycroftSkill):
 
         self.default_location = self.room_name
        
-        self.protocol = self.config["protocol"]
-        self.mqttssl = self.config["mqtt-ssl"]
-        self.mqttca = self.config["mqtt-ca-cert"]
-        self.mqtthost = self.config["mqtt-host"]
-        self.mqttport = self.config["mqtt-port"]
-        self.mqttauth = self.config["mqtt-auth"]
-        self.mqttuser = self.config["mqtt-user"]
-        self.mqttpass = self.config["mqtt-pass"]
+        self.protocol = self.settings.get('protocol')
+        self.mqttssl = self.settings.get('ssl')
+        self.mqttca = self.settings.get('ca-certificate')
+        self.mqtthost = self.settings.get('host')
+        self.mqttport = self.settings.get('port')
+        self.mqttauth = self.settings.get('auth')
+        self.mqttuser = self.settings.get('username')
+        self.mqttpass = self.settings.get('password')
 
 
 #        global ws
