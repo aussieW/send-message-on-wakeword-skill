@@ -19,7 +19,7 @@ class wakewordskill(MycroftSkill):
        
         self.protocol = self.settings.get('protocol')
         self.mqttssl = self.settings.get('ssl')
-        self.mqttca = self.settings.get('ca-certificate')
+        self.mqttca = self.settings.get('ca_certificate')
         self.mqtthost = self.settings.get('host')
         self.mqttport = self.settings.get('port')
         self.mqttauth = self.settings.get('auth')
