@@ -45,7 +45,7 @@
                   {
                      "name": "user",
                      "type": "text",
-                     "label": "Username,
+                     "label": "Username",
                      "value": ""
                   },
                   {
@@ -55,7 +55,7 @@
                      "value": ""
                   }
               ]
-          },
+          }
       ]
   }
 }
